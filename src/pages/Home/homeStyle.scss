@@ -15,11 +15,49 @@
    border-radius: px-to-rem(10);
 }
 
+.movie__content {
+   position: relative;
+   overflow: hidden;
+   border-radius: px-to-rem(10);
+}
+
 .movie__img {
    display: block;
    width: 100%;
    border-radius: px-to-rem(10);
+   transition: transform .3s ease-in-out;
 }
+
+.movie__details {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   background: rgba(0, 0, 0, 0.8);
+   color: white;
+   padding: px-to-rem(10);
+   text-align: center;
+   opacity: 0;
+   transform: translateY(100%);
+   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.movie__title {
+   font-size: px-to-rem(18);
+   font-weight: bold;
+}
+
+.movie:hover .movie__img {
+   transform: scale(1.1); 
+   transition: transform .3s ease-in-out;
+}
+
+.movie:hover .movie__details {
+   opacity: 1;
+   transform: translateY(0);
+   transition: transform .3s ease-in-out;
+}
+
 
 @media screen and (min-width: px-to-rem(400)) {
    .movie {

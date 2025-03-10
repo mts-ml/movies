@@ -1,0 +1,24 @@
+@function px-to-rem($px-value) {
+   @return $px-value / 16 * 1rem
+}
+
+.error-page {
+   margin: px-to-rem(10);
+}
+
+.error-page__subtitle {
+   margin-block: px-to-rem(10);
+}
+
+.error-page__link {
+   display: flex;
+   align-items: center;
+   gap: px-to-rem(10);
+   margin: px-to-rem(20) px-to-rem(5);
+   text-decoration: none;
+   color: black;
+
+   &:hover {
+      text-decoration: underline;
+   }
+}

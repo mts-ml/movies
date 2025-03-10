@@ -4,17 +4,17 @@
 
 .header {
    align-content: center;
-   background-color: var(--bg-color);
-   border-bottom: 1px solid var(--color);
+   background-color: var(--bg-color-header);
+   box-shadow: var(--box-shadow);
    height: px-to-rem(80);
-   margin-block-end: px-to-rem(30);
+   margin-block-end: px-to-rem(40);
 }
 
 .header__wrapper {
    display: flex;
    align-items: center;
    gap: px-to-rem(32);
-   padding: px-to-rem(15) px-to-rem(10);
+   padding: px-to-rem(15) px-to-rem(20);
    justify-content: space-between;
    max-width: px-to-rem(1400);
    margin-inline: auto;
@@ -44,13 +44,18 @@
    padding: px-to-rem(6);
    background-color: var(--bg-color);
    color: var(--color);
-   box-shadow: var(--box-shadow);
+   box-shadow: var(--box-shadow-btn);
    opacity: .6;
    transition: .2s ease-in-out;
-   
+
    &:hover {
       cursor: pointer;
       opacity: 1;
       transition: .2s ease-in-out;
    }
+}
+
+.header__sun-img,
+.header__title-img {
+   filter: invert(100%) brightness(100%);
 }

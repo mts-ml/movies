@@ -1,0 +1,56 @@
+@function px-to-rem($px-value) {
+   @return $px-value / 16 * 1rem
+}
+
+.home__movies {
+   max-width: px-to-rem(1400);
+   margin-inline: auto;
+}
+
+.movie {
+   display: block;
+   margin: px-to-rem(20);
+   background-color: black;
+   box-shadow: var(--box-shadow);
+   border-radius: px-to-rem(10);
+}
+
+.movie__img {
+   display: block;
+   width: 100%;
+   border-radius: px-to-rem(10);
+}
+
+@media screen and (min-width: px-to-rem(400)) {
+   .movie {
+      margin-inline: px-to-rem(30);
+   }
+}
+
+@media screen and (min-width: px-to-rem(500)) {
+   .home__movies {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+   }   
+}
+
+@media screen and (min-width: px-to-rem(768)) {
+   .home__movies {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+   }   
+}
+
+@media screen and (min-width: px-to-rem(1200)) {
+   .home__movies {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+   }   
+}
+
+@media screen and (min-width: px-to-rem(1400)) {
+   .home__movies {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+   }   
+}

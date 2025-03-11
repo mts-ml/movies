@@ -58,10 +58,46 @@
    transition: transform .3s ease-in-out;
 }
 
+.movie__genres {   
+   width: 100%;
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   justify-content: space-between;
+   list-style: none;
+   text-align: center;
+   color: var(--color);
+   margin-block-end: px-to-rem(50);
+   max-width: px-to-rem(1400);
+   margin-inline: auto;
+   padding-inline: px-to-rem(10);
+}
+
+.movie__link {
+   display: inline-block;
+   text-decoration: none;
+   color: var(--color);
+   margin-block: px-to-rem(10);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media screen and (min-width: px-to-rem(400)) {
    .movie {
       margin-inline: px-to-rem(30);
+   }
+
+   .movie__genres {
+      padding-inline: px-to-rem(30);
    }
 }
 
@@ -70,6 +106,10 @@
       display: grid;
       grid-template-columns: repeat(2, 1fr);
    }   
+
+   .movie__genres {
+      margin-block-end: px-to-rem(30);
+   }
 }
 
 @media screen and (min-width: px-to-rem(768)) {

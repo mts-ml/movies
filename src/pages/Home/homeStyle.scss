@@ -92,3 +92,10 @@
       grid-template-columns: repeat(5, 1fr);
    }   
 }
+
+#loading {
+   display: grid;
+   place-items: center;
+   color: var(--color);
+   font-weight: 600;
+}

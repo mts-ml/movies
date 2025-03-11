@@ -14,6 +14,7 @@ export interface Movies {
    video: boolean;
    vote_average: number;
    vote_count: number;
+   genre_ids: number[]
 }
 
 
@@ -26,8 +27,11 @@ export interface Genres {
 export const Layout: React.FC = () => {
    const [movies, setMovies] = useState<Movies[]>([])
 
+   const [page, setPage] = useState<number>(1)
+
+   const [totalPages, setTotalPages] = useState<number>(1)
+
    const [genres, setGenres] = useState<Genres[]>([])
-   console.log(genres)
 
    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
       const savedTheme: string | null = localStorage.getItem("moviesDarkTheme")
@@ -41,7 +45,7 @@ export const Layout: React.FC = () => {
       async function fetchData() {
          try {
             const [moviesResponse, genresResponse] = await Promise.all([
-               fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`),
+               fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`),
 
                fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`)
             ])
@@ -49,8 +53,18 @@ export const Layout: React.FC = () => {
             const moviesData = await moviesResponse.json()
             const genresData = await genresResponse.json()
 
-            setMovies(moviesData.results)
-            setGenres(genresData)
+            setMovies(previousMovies => (
+               page === 1 ?
+                  moviesData.results
+                  :
+                  [...previousMovies,
+                  ...moviesData.results]
+            ))
+
+
+            setTotalPages(moviesData.total_pages)
+
+            setGenres(genresData.genres)
          } catch (error) {
             console.error(error)
          }
@@ -60,10 +74,7 @@ export const Layout: React.FC = () => {
       document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
 
       localStorage.setItem("moviesDarkTheme", JSON.stringify(isDarkMode))
-   }, [isDarkMode])
-
-
-   console.log(movies)
+   }, [isDarkMode, page])
 
    function handleTheme(): void {
       setIsDarkMode(previousState => !previousState)
@@ -74,7 +85,7 @@ export const Layout: React.FC = () => {
       <>
          <Header isDarkMode={isDarkMode} handleTheme={handleTheme} />
 
-         <Outlet context={{ movies, genres }} />
+         <Outlet context={{ movies, genres, page, setPage, totalPages }} />
       </>
    )
 }

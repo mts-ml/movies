@@ -17,10 +17,19 @@ export interface Movies {
 }
 
 
+export interface Genres {
+   id: number;
+   name: string;
+}
+
+
 export const Layout: React.FC = () => {
    const [movies, setMovies] = useState<Movies[]>([])
 
-   const [darkMode, setDarkMode] = useState<boolean>(() => {
+   const [genres, setGenres] = useState<Genres[]>([])
+   console.log(genres)
+
+   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
       const savedTheme: string | null = localStorage.getItem("moviesDarkTheme")
 
       return savedTheme !== null ? JSON.parse(savedTheme) as boolean : false
@@ -29,28 +38,43 @@ export const Layout: React.FC = () => {
    const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
 
    useEffect(() => {
-      fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`)
-         .then(res => res.json())
-         .then(res => setMovies(res.results))
-         .catch(err => console.error(err))
-      
-      document.body.setAttribute("data-theme", darkMode ? "dark": "light")
+      async function fetchData() {
+         try {
+            const [moviesResponse, genresResponse] = await Promise.all([
+               fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`),
 
-      localStorage.setItem("moviesDarkTheme", JSON.stringify(darkMode))
-   }, [darkMode])
+               fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`)
+            ])
+
+            const moviesData = await moviesResponse.json()
+            const genresData = await genresResponse.json()
+
+            setMovies(moviesData.results)
+            setGenres(genresData)
+         } catch (error) {
+            console.error(error)
+         }
+      }
+      fetchData()
+
+      document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
+
+      localStorage.setItem("moviesDarkTheme", JSON.stringify(isDarkMode))
+   }, [isDarkMode])
+
 
    console.log(movies)
 
    function handleTheme(): void {
-      setDarkMode( previousState => !previousState)
+      setIsDarkMode(previousState => !previousState)
    }
 
 
    return (
       <>
-         <Header darkMode={darkMode} handleTheme={handleTheme} />
+         <Header isDarkMode={isDarkMode} handleTheme={handleTheme} />
 
-         <Outlet context={movies} />
+         <Outlet context={{ movies, genres }} />
       </>
    )
 }

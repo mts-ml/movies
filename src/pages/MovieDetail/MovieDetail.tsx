@@ -43,7 +43,7 @@ export const MovieDetail: React.FC = () => {
          </div>
       );
    }
-
+ 
    console.log(movie)
 
 
@@ -60,9 +60,6 @@ export const MovieDetail: React.FC = () => {
          <p className="movie-detail__description">
             Sinopse: {movie.overview}
          </p>
-
-
-
       </section>
    )
 }

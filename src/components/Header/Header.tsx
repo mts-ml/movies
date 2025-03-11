@@ -7,7 +7,7 @@ import './headerStyle.scss'
 
 
 interface HeaderProps {
-   darkMode: boolean
+   isDarkMode: boolean
    handleTheme: () => void
 }
 
@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
                <h1 className="header__title">Movies</h1>
 
                <img
-               className={props.darkMode ? "header__title-img" : ""}
+               className={props.isDarkMode ? "header__title-img" : ""}
                src={camera}
                width={30}
                alt="Image of a camera"
@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
                type='button' className="header__theme-btn"
                onClick={props.handleTheme}
             >
-               {props.darkMode ?
+               {props.isDarkMode ?
                   <>
                      Light mode
                      < img

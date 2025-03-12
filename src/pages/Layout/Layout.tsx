@@ -33,6 +33,8 @@ export const Layout: React.FC = () => {
 
    const [genres, setGenres] = useState<Genres[]>([])
 
+   const [isLoading, setIsLoading] = useState<boolean>(false)
+
    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
       const savedTheme: string | null = localStorage.getItem("moviesDarkTheme")
 
@@ -43,6 +45,7 @@ export const Layout: React.FC = () => {
 
    useEffect(() => {
       async function fetchData() {
+         setIsLoading(true)
          try {
             const [moviesResponse, genresResponse] = await Promise.all([
                fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`),
@@ -67,6 +70,8 @@ export const Layout: React.FC = () => {
             setGenres(genresData.genres)
          } catch (error) {
             console.error(error)
+         } finally {
+            setIsLoading(false)
          }
       }
       fetchData()
@@ -85,7 +90,7 @@ export const Layout: React.FC = () => {
       <>
          <Header isDarkMode={isDarkMode} handleTheme={handleTheme} />
 
-         <Outlet context={{ movies, genres, page, setPage, totalPages }} />
+         <Outlet context={{ movies, genres, page, setPage, totalPages, isLoading, setIsLoading }} />
       </>
    )
 }

@@ -50,7 +50,7 @@ export const Layout: React.FC = () => {
             const [moviesResponse, genresResponse] = await Promise.all([
                fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`),
 
-               fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`)
+               fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`),
             ])
 
             const moviesData = await moviesResponse.json()

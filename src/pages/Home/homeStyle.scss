@@ -167,6 +167,10 @@
       margin-inline: px-to-rem(30);
    }
 
+   .movie__img {
+      aspect-ratio: 30 / 45;
+   }
+
    .movie__genres {
       padding-inline: px-to-rem(30);
    }

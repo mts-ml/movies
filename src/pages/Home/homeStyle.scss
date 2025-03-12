@@ -48,7 +48,7 @@
 }
 
 .movie:hover .movie__img {
-   transform: scale(1.1); 
+   transform: scale(1.1);
    transition: transform .3s ease-in-out;
 }
 
@@ -58,7 +58,7 @@
    transition: transform .3s ease-in-out;
 }
 
-.movie__genres {   
+.movie__genres {
    width: 100%;
    display: grid;
    grid-template-columns: repeat(3, 1fr);
@@ -66,29 +66,100 @@
    list-style: none;
    text-align: center;
    color: var(--color);
-   margin-block-end: px-to-rem(50);
    max-width: px-to-rem(1400);
    margin-inline: auto;
    padding-inline: px-to-rem(10);
 }
 
 .movie__link {
+   position: relative;
    display: inline-block;
    text-decoration: none;
    color: var(--color);
    margin-block: px-to-rem(10);
+
+   &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: px-to-rem(1);
+      background-color: var(--color);
+      bottom: -3px;
+      left: 0;
+      transform: scale(0);
+      transform-origin: left;
+      transition: transform .3s ease-in-out;
+   }
+
+   &:hover::After {
+      transform: scale(1);
+      transition: transform .3s ease-in-out;
+   }
 }
 
+.movie__link.active {
+   font-weight: bold;
+   color: #5087A7;
+}
 
+#loading {
+   display: grid;
+   place-items: center;
+   height: 100vh;
+   color: var(--color);
+}
 
+.load-more-button {
+   display: block;
+   margin: px-to-rem(32) auto;
+   padding: px-to-rem(16) px-to-rem(32);
+   background-color: rgb(80, 135, 167);
+   color: white;
+   border: none;
+   border-radius: 5px;
+   cursor: pointer;
+   transition: background-color 0.3s;
 
+   &:hover {
+      background-color: darken(rgb(80, 135, 167), 10%);
+   }
 
+   &:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+   }
+}
 
+.loading-more {
+   display: flex;
+   justify-content: center;
+   padding: 2rem;
+}
 
+.movie__clear-filter {
+   display: block;
+   margin: px-to-rem(32) auto;
+   padding: px-to-rem(10) px-to-rem(10);
+   background-color: rgb(80, 135, 167);
+   color: white;
+   border: none;
+   border-radius: 5px;
+   cursor: pointer;
+   transition: background-color 0.3s ease-in-out, opacity .3s ease-in-out;
+   opacity: 0;
+   pointer-events: none;
 
+   &:hover {
+      background-color: darken(rgb(80, 135, 167), 10%);
+   }
+}
 
-
-
+.movie__btn-visible {
+   opacity: 1;
+   cursor: pointer;
+   pointer-events: auto;
+   transition: opacity .3s ease-in-out;
+}
 
 
 @media screen and (min-width: px-to-rem(400)) {
@@ -105,7 +176,7 @@
    .home__movies {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-   }   
+   }
 
    .movie__genres {
       margin-block-end: px-to-rem(30);
@@ -116,26 +187,19 @@
    .home__movies {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-   }   
+   }
 }
 
 @media screen and (min-width: px-to-rem(1200)) {
    .home__movies {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-   }   
+   }
 }
 
 @media screen and (min-width: px-to-rem(1400)) {
    .home__movies {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-   }   
-}
-
-#loading {
-   display: grid;
-   place-items: center;
-   color: var(--color);
-   font-weight: 600;
+   }
 }

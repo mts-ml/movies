@@ -40,7 +40,7 @@ export const Layout: React.FC = () => {
 
       return savedTheme !== null ? JSON.parse(savedTheme) as boolean : false
    })
-
+   
    const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
 
    useEffect(() => {

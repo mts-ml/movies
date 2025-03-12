@@ -2,6 +2,7 @@ import { useOutletContext, Link, useSearchParams } from 'react-router-dom'
 import { Genres, Movies } from '../Layout/Layout'
 import { ThreeDots } from 'react-loader-spinner';
 import { useEffect } from 'react';
+import img from '../../assets/images/default-img.png'
 
 import './homeStyle.scss'
 
@@ -86,15 +87,17 @@ export const Home: React.FC = () => {
          return true
       }
       return false
-   }).map(movie => (
-      <Link
+   }).map(movie => {
+      const image = movie.poster_path ? `http://image.tmdb.org/t/p/w500${movie.poster_path}` : img
+
+      return <Link
          to={`movie/${movie.id}`}
          state={{ searchUrl: searchParams.toString(), type: genreName }}
          key={movie.id}
          className="movie"
       >
          <div className="movie__content">
-            <img className='movie__img' src={`http://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={`Poster of the movie ${movie.title}`} />
+            <img className='movie__img' src={image} alt={`Poster of the movie ${movie.title}`} />
 
             <div className="movie__details">
                <h3 className="movie__title">{movie.title}</h3>
@@ -105,7 +108,7 @@ export const Home: React.FC = () => {
             </div>
          </div>
       </Link>
-   ))
+   })
 
 
    return (

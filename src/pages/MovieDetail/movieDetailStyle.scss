@@ -62,8 +62,37 @@
    line-height: px-to-rem(20);
 }
 
+.movie-detail-link {
+   position: relative;
+   display: inline-flex;
+   align-items: center;
+   gap: px-to-rem(10);
+   text-decoration: none;
+   color: var(--color);
+   font-weight: 600;
+   margin-block-end: px-to-rem(20);
 
+   &>img {
+      filter: var(--filter)
+   }
 
+   &::after {
+      content: "";
+      position: absolute;
+      background-color: var(--color);
+      width: 100%;
+      height: px-to-rem(1);
+      bottom: -3px;
+      transform: scale(0);
+      transform-origin: right;
+      transition: transform .5s ease-in-out;
+   }
+
+   &:hover::after {
+      transform: scale(1);
+      transition: transform .5s ease-in-out;
+   }
+}
 
 @media screen and (min-width: px-to-rem(400)) {
    .movie-detail {

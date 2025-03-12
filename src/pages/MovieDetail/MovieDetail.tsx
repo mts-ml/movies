@@ -1,6 +1,6 @@
 import { Movies } from "../Layout/Layout";
 import { formatDate, OutletContextType } from "../Home/Home";
-import { useOutletContext, useParams, Link } from "react-router-dom"
+import { useOutletContext, useParams, Link, useLocation } from "react-router-dom"
 import { ThreeDots } from 'react-loader-spinner';
 import leftArrow from '../../assets/images/left-arrow.png'
 
@@ -11,6 +11,12 @@ export const MovieDetail: React.FC = () => {
    const { movies } = useOutletContext<OutletContextType>();
 
    const { id } = useParams()
+
+   const pageLocation = useLocation()
+
+   const movieGenreState = pageLocation.state?.searchUrl
+
+   const movieGenreType = pageLocation.state?.type || "all"
 
    if (!movies || movies.length <= 0) {
       return (
@@ -43,12 +49,17 @@ export const MovieDetail: React.FC = () => {
          </div>
       );
    }
- 
+
    console.log(movie)
 
 
    return (
       <section className="movie-detail">
+         <Link className="movie-detail-link" to={`..?${movieGenreState}`}>
+            <img src={leftArrow} alt="Icon of a left arrow" />
+            Back to {movieGenreType} movies
+         </Link>
+
          <img className='movie-detail__img' src={`http://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={`Poster of the movie ${movie.title}`} />
 
          <h2 className="movie-detail__title"><span>Title:</span> {movie.title}</h2>

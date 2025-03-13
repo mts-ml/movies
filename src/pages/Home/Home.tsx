@@ -9,6 +9,7 @@ import './homeStyle.scss'
 
 export interface OutletContextType {
    movies: Movies[]
+   setMovies: React.Dispatch<React.SetStateAction<Movies[]>>
    genres: Genres[]
    page: number
    setPage: React.Dispatch<React.SetStateAction<number>>
@@ -31,7 +32,10 @@ export function formatDate(dateString: string, locale = navigator.language) {
 }
 
 export const Home: React.FC = () => {
-   const { movies, genres, page, setPage, totalPages, isLoading, setIsLoading } = useOutletContext<OutletContextType>()
+   const { movies, setMovies, genres, page, setPage, totalPages, isLoading, setIsLoading } = useOutletContext<OutletContextType>()
+
+   const [searchParams, setSearchParams] = useSearchParams();
+   const getMoviesByGenre = searchParams.get("genre")
 
    useEffect(() => {
       const handleScroll = () => {
@@ -56,10 +60,12 @@ export const Home: React.FC = () => {
       setIsLoading(false)
    }, [movies])
 
-   const [searchParams, setSearchParams] = useSearchParams();
-
-   const getMoviesByGenre = searchParams.get("genre")
-
+   useEffect(() => {
+      setPage(1);
+      setMovies([])
+      setIsLoading(true);
+   }, [searchParams]); 
+   
    const filteredMovies = getMoviesByGenre ? movies.filter(movie => movie.genre_ids.includes(Number(getMoviesByGenre))) : movies
 
    if (!movies?.length || !genres?.length) {

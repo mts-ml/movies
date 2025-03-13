@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { useEffect, useState } from "react";
 
@@ -26,21 +26,20 @@ export interface Genres {
 
 export const Layout: React.FC = () => {
    const [movies, setMovies] = useState<Movies[]>([])
-
    const [page, setPage] = useState<number>(1)
-
    const [totalPages, setTotalPages] = useState<number>(1)
-
    const [genres, setGenres] = useState<Genres[]>([])
-
    const [isLoading, setIsLoading] = useState<boolean>(false)
-
    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
       const savedTheme: string | null = localStorage.getItem("moviesDarkTheme")
 
       return savedTheme !== null ? JSON.parse(savedTheme) as boolean : false
    })
-   
+
+   const location = useLocation();
+   const searchParams = new URLSearchParams(location.search);
+   const selectedGenre = searchParams.get("genre");
+
    const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
 
    useEffect(() => {
@@ -48,7 +47,8 @@ export const Layout: React.FC = () => {
          setIsLoading(true)
          try {
             const [moviesResponse, genresResponse] = await Promise.all([
-               fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}`),
+               fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}${selectedGenre ? `&with_genres=${selectedGenre}` : ""
+                  }`),
 
                fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`),
             ])
@@ -56,17 +56,13 @@ export const Layout: React.FC = () => {
             const moviesData = await moviesResponse.json()
             const genresData = await genresResponse.json()
 
-            setMovies(previousMovies => (
-               page === 1 ?
-                  moviesData.results
-                  :
-                  [...previousMovies,
+            setMovies(previousMovies => {
+               if (page === 1) return moviesData.results
+                  
+               return [...previousMovies,
                   ...moviesData.results]
-            ))
-
-
+            })
             setTotalPages(moviesData.total_pages)
-
             setGenres(genresData.genres)
          } catch (error) {
             console.error(error)
@@ -79,18 +75,22 @@ export const Layout: React.FC = () => {
       document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
 
       localStorage.setItem("moviesDarkTheme", JSON.stringify(isDarkMode))
-   }, [isDarkMode, page])
+   }, [isDarkMode, page, selectedGenre])
 
    function handleTheme(): void {
       setIsDarkMode(previousState => !previousState)
    }
+
+   useEffect(() => {
+      setIsLoading(false)
+   }, [movies])
 
 
    return (
       <>
          <Header isDarkMode={isDarkMode} handleTheme={handleTheme} />
 
-         <Outlet context={{ movies, genres, page, setPage, totalPages, isLoading, setIsLoading }} />
+         <Outlet context={{ movies, setMovies, genres, page, setPage, totalPages, isLoading, setIsLoading }} />
       </>
    )
 }

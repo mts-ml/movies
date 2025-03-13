@@ -1,8 +1,8 @@
 import { Movies } from "../Layout/Layout";
 import { formatDate, OutletContextType } from "../Home/Home";
 import { useOutletContext, useParams, Link, useLocation } from "react-router-dom"
+import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from 'react-loader-spinner';
-import { useEffect, useState } from "react";
 import leftArrow from '../../assets/images/left-arrow.png'
 import castImg from '../../assets/images/person.svg'
 
@@ -19,16 +19,19 @@ interface MovieDetailProps {
 
 
 export const MovieDetail: React.FC = () => {
-   const { movies } = useOutletContext<OutletContextType>();
+   const { movies, isLoading, setIsLoading } = useOutletContext<OutletContextType>();
 
    const [cast, setCast] = useState<MovieDetailProps[]>([])
 
    const { id } = useParams()
 
+   const carousel = useRef<HTMLElement | null>(null)
+
    const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
 
    useEffect(() => {
       async function fetchData() {
+         setIsLoading(true)
          try {
             const [castResponse] = await Promise.all([
                fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}`)
@@ -37,6 +40,8 @@ export const MovieDetail: React.FC = () => {
             setCast(castData.cast)
          } catch (error) {
             console.log(`Error fetching data: ${error}`)
+         } finally {
+            setIsLoading(false)
          }
       }
       fetchData()
@@ -47,22 +52,6 @@ export const MovieDetail: React.FC = () => {
    const movieGenreState = pageLocation.state?.searchUrl
 
    const movieGenreType = pageLocation.state?.type || "all"
-
-   if (!movies || movies.length <= 0) {
-      return (
-         <div id='loading'>
-            <span>Loading...</span>
-            <ThreeDots
-               visible={true}
-               height={80}
-               width={80}
-               color="rgb(80, 135, 167)"
-               radius="9"
-               ariaLabel="three-dots-loading"
-            />
-         </div>
-      )
-   }
 
    const movie: Movies | undefined = movies.find(film => film.id === Number(id))
 
@@ -80,9 +69,52 @@ export const MovieDetail: React.FC = () => {
       );
    }
 
+   if (!movies || movies.length <= 0 || cast.length <= 0 || isLoading) {
+      return (
+         <div id='loading'>
+            <span>Loading...</span>
+            <ThreeDots
+               visible={true}
+               height={80}
+               width={80}
+               color="rgb(80, 135, 167)"
+               radius="9"
+               ariaLabel="three-dots-loading"
+            />
+         </div>
+      )
+   }
+
+
+   function handleLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
+      event.preventDefault()
+      if (carousel.current && carousel.current.offsetWidth) {
+         carousel.current.scrollLeft -= carousel.current.offsetWidth
+      }
+   }
+
+   function handleRightClick(event: React.MouseEvent<HTMLButtonElement>) {
+      event.preventDefault()
+      if (carousel.current && carousel.current.offsetWidth) {
+         carousel.current.scrollLeft += carousel.current.offsetWidth
+      }
+   }
+
    console.log(cast)
    return (
-      <>
+      <main className="movie-detail__main">
+         {cast.length <= 0 && (
+            <div className="loading-more">
+               <ThreeDots
+                  visible={true}
+                  height={80}
+                  width={80}
+                  color="rgb(80, 135, 167)"
+                  radius="9"
+               />
+            </div>
+         )}
+
          <section className="movie-detail">
             <Link className="movie-detail-link" to={`..?${movieGenreState}`}>
                <img src={leftArrow} alt="Icon of a left arrow" />
@@ -104,8 +136,8 @@ export const MovieDetail: React.FC = () => {
 
          <h3 className="movie-detail__cast-name">Cast</h3>
 
-         <section className="movie-detail__cast">
-            {cast.slice(0, 6).map(actor => {
+         <section className="movie-detail__cast" ref={carousel}>
+            {cast.map(actor => {
                const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}` : castImg
 
                return <div key={actor.id} className="movie-detail__div">
@@ -113,12 +145,44 @@ export const MovieDetail: React.FC = () => {
 
                   <h4 className="movie-detail__cast_name">{actor.name}</h4>
 
+                  <p className="movie-detail__character">{actor.character}</p>
+
                   <p className="movie-detail__popularity">
                      Popularity: {actor.popularity.toFixed(2)}
                   </p>
                </div>
-})}
+            })}
          </section>
-      </>
+
+         <div className="movie-detail__buttons">
+            <button
+               aria-label="Arrow back"
+               type="button"
+               onClick={handleLeftClick}
+            >
+               <svg
+                  className="movie-detail__arrows"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30" height="30" viewBox="0 0 24 24"
+                  fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+               </svg>
+            </button>
+
+            <button
+               aria-label="Arrow forward"
+               type="button"
+               onClick={handleRightClick}
+            >
+               <svg
+                  className="movie-detail__arrows"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30" height="30" viewBox="0 0 24 24"
+                  fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+               </svg>
+            </button>
+         </div>
+      </main>
    )
 }

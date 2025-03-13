@@ -135,7 +135,11 @@
 
 .loading-more {
    display: flex;
-   justify-content: center;
+   align-items: center;
+   margin-inline: auto;
+   flex-flow: column nowrap;
+   color: var(--color);
+   font-weight: 600;
    padding: 2rem;
 }
 

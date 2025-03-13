@@ -54,7 +54,7 @@ export const Home: React.FC = () => {
 
       window.addEventListener('scroll', handleScroll)
       return () => window.removeEventListener('scroll', handleScroll)
-   }, [isLoading, page, totalPages, setPage])
+   }, [isLoading, page, totalPages])
 
    useEffect(() => {
       setIsLoading(false)
@@ -62,11 +62,8 @@ export const Home: React.FC = () => {
 
    useEffect(() => {
       setPage(1);
-      setMovies([])
       setIsLoading(true);
-   }, [searchParams]); 
-   
-   const filteredMovies = getMoviesByGenre ? movies.filter(movie => movie.genre_ids.includes(Number(getMoviesByGenre))) : movies
+   }, [searchParams]);
 
    if (!movies?.length || !genres?.length) {
       return (
@@ -87,7 +84,7 @@ export const Home: React.FC = () => {
    const genreName = genres.find(genre => genre.id === Number(getMoviesByGenre))?.name || "all"
 
    const uniqueIdsSet = new Set<number>()
-   const moviesList = filteredMovies.filter(movie => {
+   const moviesList = movies.filter(movie => {
       if (!uniqueIdsSet.has(movie.id)) {
          uniqueIdsSet.add(movie.id)
          return true
@@ -97,8 +94,8 @@ export const Home: React.FC = () => {
       const image = movie.poster_path ? `http://image.tmdb.org/t/p/w500${movie.poster_path}` : img
 
       return <Link
-         to={`movie/${movie.id}`}
-         state={{ searchUrl: searchParams.toString(), type: genreName }}
+         to={`movie/${movie.id}?${searchParams.toString()}`}
+         state={{ type: genreName }}
          key={movie.id}
          className="movie"
       >

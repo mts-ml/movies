@@ -19,7 +19,7 @@ interface MovieDetailProps {
 
 
 export const MovieDetail: React.FC = () => {
-   const { movies, isLoading, setIsLoading } = useOutletContext<OutletContextType>();
+   const { movies, setIsLoading } = useOutletContext<OutletContextType>();
 
    const [cast, setCast] = useState<MovieDetailProps[]>([])
 
@@ -48,9 +48,7 @@ export const MovieDetail: React.FC = () => {
    }, [id])
 
    const pageLocation = useLocation()
-
-   const movieGenreState = pageLocation.state?.searchUrl
-
+   const movieGenreState = pageLocation.search
    const movieGenreType = pageLocation.state?.type || "all"
 
    const movie: Movies | undefined = movies.find(film => film.id === Number(id))
@@ -69,23 +67,6 @@ export const MovieDetail: React.FC = () => {
       );
    }
 
-   if (!movies || movies.length <= 0 || cast.length <= 0 || isLoading) {
-      return (
-         <div id='loading'>
-            <span>Loading...</span>
-            <ThreeDots
-               visible={true}
-               height={80}
-               width={80}
-               color="rgb(80, 135, 167)"
-               radius="9"
-               ariaLabel="three-dots-loading"
-            />
-         </div>
-      )
-   }
-
-
    function handleLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
       event.preventDefault()
       if (carousel.current && carousel.current.offsetWidth) {
@@ -100,23 +81,11 @@ export const MovieDetail: React.FC = () => {
       }
    }
 
-   console.log(cast)
+
    return (
       <main className="movie-detail__main">
-         {cast.length <= 0 && (
-            <div className="loading-more">
-               <ThreeDots
-                  visible={true}
-                  height={80}
-                  width={80}
-                  color="rgb(80, 135, 167)"
-                  radius="9"
-               />
-            </div>
-         )}
-
          <section className="movie-detail">
-            <Link className="movie-detail-link" to={`..?${movieGenreState}`}>
+            <Link className="movie-detail-link" to={`..${movieGenreState}`}>
                <img src={leftArrow} alt="Icon of a left arrow" />
                Back to {movieGenreType} movies
             </Link>
@@ -137,21 +106,35 @@ export const MovieDetail: React.FC = () => {
          <h3 className="movie-detail__cast-name">Cast</h3>
 
          <section className="movie-detail__cast" ref={carousel}>
-            {cast.map(actor => {
-               const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}` : castImg
-
-               return <div key={actor.id} className="movie-detail__div">
-                  <img src={castImage} alt={`Picture of ${actor.name}`} />
-
-                  <h4 className="movie-detail__cast_name">{actor.name}</h4>
-
-                  <p className="movie-detail__character">{actor.character}</p>
-
-                  <p className="movie-detail__popularity">
-                     Popularity: {actor.popularity.toFixed(2)}
-                  </p>
+            {cast.length <= 0 ? (
+               <div className="loading-more">
+                  <span>Loading...</span>
+                  <ThreeDots
+                     visible={true}
+                     height={80}
+                     width={80}
+                     color="rgb(80, 135, 167)"
+                     radius="9"
+                  />
                </div>
-            })}
+            ) : (
+               cast.map(actor => {
+                  const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}` : castImg
+
+                  return <div key={actor.id} className="movie-detail__div">
+                     <img src={castImage} alt={`Picture of ${actor.name}`} />
+
+                     <h4 className="movie-detail__cast_name">{actor.name}</h4>
+
+                     <p className="movie-detail__character">{actor.character || "Character not especified"}</p>
+
+                     <p className="movie-detail__popularity">
+                        Popularity: {actor.popularity.toFixed(2)}
+                     </p>
+                  </div>
+               })
+            )
+            }
          </section>
 
          <div className="movie-detail__buttons">

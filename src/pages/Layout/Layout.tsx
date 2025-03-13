@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useSearchParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { useEffect, useState } from "react";
 
@@ -36,18 +36,18 @@ export const Layout: React.FC = () => {
       return savedTheme !== null ? JSON.parse(savedTheme) as boolean : false
    })
 
-   const location = useLocation();
-   const searchParams = new URLSearchParams(location.search);
-   const selectedGenre = searchParams.get("genre");
+   const [searchParams] = useSearchParams()
+   const selectedGenreFromQueryParams = searchParams.get("genre")
 
    const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
 
    useEffect(() => {
       async function fetchData() {
          setIsLoading(true)
+
          try {
             const [moviesResponse, genresResponse] = await Promise.all([
-               fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}${selectedGenre ? `&with_genres=${selectedGenre}` : ""
+               fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}${selectedGenreFromQueryParams ? `&with_genres=${selectedGenreFromQueryParams}` : ""
                   }`),
 
                fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`),
@@ -62,6 +62,7 @@ export const Layout: React.FC = () => {
                return [...previousMovies,
                   ...moviesData.results]
             })
+
             setTotalPages(moviesData.total_pages)
             setGenres(genresData.genres)
          } catch (error) {
@@ -75,7 +76,7 @@ export const Layout: React.FC = () => {
       document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
 
       localStorage.setItem("moviesDarkTheme", JSON.stringify(isDarkMode))
-   }, [isDarkMode, page, selectedGenre])
+   }, [isDarkMode, page, selectedGenreFromQueryParams])
 
    function handleTheme(): void {
       setIsDarkMode(previousState => !previousState)

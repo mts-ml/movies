@@ -103,10 +103,13 @@
 }
 
 #loading {
-   display: grid;
-   place-items: center;
-   height: 100vh;
+   display: flex;
+   flex-flow: column nowrap;
+   justify-content: center;
+   align-items: center;
+   height: 85vh;
    color: var(--color);
+   font-weight: 600;
 }
 
 .load-more-button {

@@ -27,6 +27,7 @@ export interface Genres {
 export const Layout: React.FC = () => {
    const [movies, setMovies] = useState<Movies[]>(() => {
       const moviesOnLocalStorage = localStorage.getItem("moviesCache")
+      
       return moviesOnLocalStorage ? JSON.parse(moviesOnLocalStorage) : []
    })
    const [page, setPage] = useState<number>(1)

@@ -25,7 +25,10 @@ export interface Genres {
 
 
 export const Layout: React.FC = () => {
-   const [movies, setMovies] = useState<Movies[]>([])
+   const [movies, setMovies] = useState<Movies[]>(() => {
+      const moviesOnLocalStorage = localStorage.getItem("moviesCache")
+      return moviesOnLocalStorage ? JSON.parse(moviesOnLocalStorage) : []
+   })
    const [page, setPage] = useState<number>(1)
    const [totalPages, setTotalPages] = useState<number>(1)
    const [genres, setGenres] = useState<Genres[]>([])
@@ -76,7 +79,8 @@ export const Layout: React.FC = () => {
       document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
 
       localStorage.setItem("moviesDarkTheme", JSON.stringify(isDarkMode))
-   }, [isDarkMode, page, selectedGenreFromQueryParams])
+      localStorage.setItem("moviesCache", JSON.stringify(movies))
+   }, [isDarkMode, page, selectedGenreFromQueryParams, movies])
 
    function handleTheme(): void {
       setIsDarkMode(previousState => !previousState)

@@ -18,10 +18,20 @@ interface MovieDetailProps {
 }
 
 
+interface TrailerProps {
+   id: string
+   site: string
+   type: string
+   key: string
+}
+
+
 export const MovieDetail: React.FC = () => {
-   const { movies, setIsLoading } = useOutletContext<OutletContextType>();
+   const { movies, isLoading, setIsLoading } = useOutletContext<OutletContextType>();
 
    const [cast, setCast] = useState<MovieDetailProps[]>([])
+
+   const [trailers, setTrailers] = useState<TrailerProps[]>([])
 
    const { id } = useParams()
 
@@ -33,11 +43,17 @@ export const MovieDetail: React.FC = () => {
       async function fetchData() {
          setIsLoading(true)
          try {
-            const [castResponse] = await Promise.all([
-               fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}`)
+            const [castResponse, trailerResponse] = await Promise.all([
+               fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}`),
+
+               fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`)
             ])
+
             const castData = await castResponse.json()
-            setCast(castData.cast)
+            const trailerData = await trailerResponse.json()
+
+            setCast(castData.cast || [])
+            setTrailers(trailerData.results || [])
          } catch (error) {
             console.log(`Error fetching data: ${error}`)
          } finally {
@@ -81,6 +97,10 @@ export const MovieDetail: React.FC = () => {
       }
    }
 
+   const youTubeTrailers = trailers.filter(trailer => (
+      trailer.site === "YouTube" && trailer.type === "Trailer"
+   ))
+
 
    return (
       <main className="movie-detail__main">
@@ -104,19 +124,9 @@ export const MovieDetail: React.FC = () => {
          </section>
 
          <h3 className="movie-detail__cast-name">Cast</h3>
-
          <section className="movie-detail__cast" ref={carousel}>
-            {cast.length <= 0 ? (
-               <div className="loading-more">
-                  <span>Loading...</span>
-                  <ThreeDots
-                     visible={true}
-                     height={80}
-                     width={80}
-                     color="rgb(80, 135, 167)"
-                     radius="9"
-                  />
-               </div>
+            {cast.length === 0 ? (
+               <p className="movie-detail__error">No cast avaiable</p>
             ) : (
                cast.map(actor => {
                   const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}` : castImg
@@ -137,7 +147,7 @@ export const MovieDetail: React.FC = () => {
             }
          </section>
 
-         <div className="movie-detail__buttons">
+         <div className={cast.length === 0 ? "movie-detail__disabled" : "movie-detail__buttons"}>
             <button
                aria-label="Arrow back"
                type="button"
@@ -165,6 +175,28 @@ export const MovieDetail: React.FC = () => {
                   <polyline points="15 18 9 12 15 6"></polyline>
                </svg>
             </button>
+         </div>
+
+         <div className="movie-detail__div-absolute">
+            <h3 className="movie-detail__trailers-title">Trailer</h3>
+            <section className="movie-detail__trailers">
+               {youTubeTrailers.length === 0 ? (
+                  <p className="movie-detail__error">No trailer avaiable</p>
+               ) : (
+
+                  <div className="movie-detail__video-container">
+                     <iframe
+                        width={280}
+                        height={463}
+                        src={`https://www.youtube.com/embed/${youTubeTrailers[0]?.key}`}
+                        title="YouTube video player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        referrerPolicy="no-referrer"
+                     ></iframe>
+                  </div>
+               )}
+            </section>
          </div>
       </main>
    )

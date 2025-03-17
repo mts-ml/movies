@@ -1,87 +1,23 @@
-import { Movies } from "../Layout/Layout";
-import { formatDate, OutletContextType } from "../Home/Home";
-import { useOutletContext, useParams, Link, useLocation } from "react-router-dom"
+import { formatDate, } from "../Home/Home";
+import { useParams, Link, useLocation, useLoaderData } from "react-router-dom"
 import { useEffect, useRef, useState } from "react";
-import { ThreeDots } from 'react-loader-spinner';
 import leftArrow from '../../assets/images/left-arrow.png'
 import castImg from '../../assets/images/person.svg'
+import { MovieDetailLoaderData } from "../../moviesLoader";
 
 import "./movieDetailStyle.scss"
 
 
-interface MovieDetailProps {
-   character: string
-   id: number
-   name: string
-   popularity: number
-   profile_path: string
-}
-
-
-interface TrailerProps {
-   id: string
-   site: string
-   type: string
-   key: string
-}
-
-
 export const MovieDetail: React.FC = () => {
-   const { movies, isLoading, setIsLoading } = useOutletContext<OutletContextType>();
-
-   const [cast, setCast] = useState<MovieDetailProps[]>([])
-
-   const [trailers, setTrailers] = useState<TrailerProps[]>([])
-
-   const { id } = useParams()
-
+   const { movie, cast, trailers } = useLoaderData() as MovieDetailLoaderData
    const carousel = useRef<HTMLElement | null>(null)
-
-   const API_KEY: string = import.meta.env.VITE_OMDB_API_KEY
-
-   useEffect(() => {
-      async function fetchData() {
-         setIsLoading(true)
-         try {
-            const [castResponse, trailerResponse] = await Promise.all([
-               fetch(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}`),
-
-               fetch(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}`)
-            ])
-
-            const castData = await castResponse.json()
-            const trailerData = await trailerResponse.json()
-
-            setCast(castData.cast || [])
-            setTrailers(trailerData.results || [])
-         } catch (error) {
-            console.log(`Error fetching data: ${error}`)
-         } finally {
-            setIsLoading(false)
-         }
-      }
-      fetchData()
-   }, [id])
-
    const pageLocation = useLocation()
    const movieGenreState = pageLocation.search
    const movieGenreType = pageLocation.state?.type || "all"
 
-   const movie: Movies | undefined = movies.find(film => film.id === Number(id))
-
-   if (!movie) {
-      return (
-         <div className="movie-detail__error">
-            <Link to="/">
-               <img width={17} src={leftArrow} alt="Image of a left arrow" />
-               Go back to Home
-            </Link>
-
-            <p>Movie not found!</p>
-
-         </div>
-      );
-   }
+   const youTubeTrailers = trailers.filter(trailer => (
+      trailer.site === "YouTube" && trailer.type === "Trailer"
+   ))
 
    function handleLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
       event.preventDefault()
@@ -97,10 +33,6 @@ export const MovieDetail: React.FC = () => {
       }
    }
 
-   const youTubeTrailers = trailers.filter(trailer => (
-      trailer.site === "YouTube" && trailer.type === "Trailer"
-   ))
-
 
    return (
       <main className="movie-detail__main">
@@ -110,7 +42,11 @@ export const MovieDetail: React.FC = () => {
                Back to {movieGenreType} movies
             </Link>
 
-            <img className='movie-detail__img' src={`http://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={`Poster of the movie ${movie.title}`} />
+            <img
+               className='movie-detail__img'
+               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+               alt={`Poster of the movie ${movie.title}`}
+            />
 
             <h2 className="movie-detail__title"><span>Title:</span> {movie.title}</h2>
 
@@ -129,7 +65,7 @@ export const MovieDetail: React.FC = () => {
                <p className="movie-detail__error">No cast avaiable</p>
             ) : (
                cast.map(actor => {
-                  const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500/${actor.profile_path}` : castImg
+                  const castImage = actor.profile_path ? `https://image.tmdb.org/t/p/w500${actor.profile_path}` : castImg
 
                   return <div key={actor.id} className="movie-detail__div">
                      <img src={castImage} alt={`Picture of ${actor.name}`} />

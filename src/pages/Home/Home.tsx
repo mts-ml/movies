@@ -1,22 +1,11 @@
-import { useOutletContext, Link, useSearchParams } from 'react-router-dom'
-import { Genres, Movies } from '../Layout/Layout'
+import { Link, useSearchParams, useLoaderData } from 'react-router-dom'
+import { HomeLoaderData, Movies } from '../../moviesLoader';
 import { ThreeDots } from 'react-loader-spinner';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import img from '../../assets/images/default-img.png'
 
 import './homeStyle.scss'
 
-
-export interface OutletContextType {
-   movies: Movies[]
-   setMovies: React.Dispatch<React.SetStateAction<Movies[]>>
-   genres: Genres[]
-   page: number
-   setPage: React.Dispatch<React.SetStateAction<number>>
-   totalPages: number
-   isLoading: boolean
-   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-}
 
 export function formatDate(dateString: string, locale = navigator.language) {
    const date = new Date(dateString)
@@ -32,40 +21,60 @@ export function formatDate(dateString: string, locale = navigator.language) {
 }
 
 export const Home: React.FC = () => {
-   const { movies, setMovies, genres, page, setPage, totalPages, isLoading, setIsLoading } = useOutletContext<OutletContextType>()
+   const { movies, genres, totalPages } = useLoaderData() as HomeLoaderData
+   const [searchParams, setSearchParams] = useSearchParams()
+   const [allMovies, setAllMovies] = useState<Movies[]>(movies)
+   const [currentPage, setCurrentPage] = useState<number>(1)
+   const [isLoading, setIsLoading] = useState<boolean>(false)
 
-   const [searchParams, setSearchParams] = useSearchParams();
    const getMoviesByGenre = searchParams.get("genre")
+
+   const handleGenreChange = () => {
+      setAllMovies([])
+      setCurrentPage(1)
+      setSearchParams(params => {
+         params.delete("page")
+         return params
+      })
+   }
 
    useEffect(() => {
       const handleScroll = () => {
-         if (isLoading || page >= totalPages) return
+         if (isLoading || currentPage >= totalPages) return
 
-         const scrollDistanceFromTop = document.documentElement.scrollTop;
-         const totalPageHeight = document.documentElement.scrollHeight;
-         const visibleViewportHeight = document.documentElement.clientHeight;
-
+         const scrollDistanceFromTop = document.documentElement.scrollTop
+         const totalPageHeight = document.documentElement.scrollHeight
+         const visibleViewportHeight = document.documentElement.clientHeight
 
          if (scrollDistanceFromTop + visibleViewportHeight >= totalPageHeight - 100) {
             setIsLoading(true)
-            setPage(previousState => previousState + 1)
+            setCurrentPage(previousPage => {
+               const nextPage = previousPage + 1
+
+               setSearchParams(previousParams => {
+                  previousParams.set("page", String(nextPage))
+                  return previousParams
+               })
+
+               return nextPage
+            })
          }
       }
 
       window.addEventListener('scroll', handleScroll)
       return () => window.removeEventListener('scroll', handleScroll)
-   }, [isLoading, page, totalPages])
+   }, [isLoading, currentPage, totalPages, searchParams])
 
    useEffect(() => {
+      currentPage === 1 ? setAllMovies(movies) : setAllMovies((previousState: Movies[]) => (
+         [...previousState,
+         ...movies
+         ]
+      ))
       setIsLoading(false)
    }, [movies])
 
-   useEffect(() => {
-      setPage(1);
-      setIsLoading(true);
-   }, [searchParams]);
-
-   if (!movies?.length || !genres?.length) {
+   if (!allMovies?.length || !genres?.length) {
       return (
          <div id='loading' >
             <span>Loading...</span>
@@ -84,14 +93,14 @@ export const Home: React.FC = () => {
    const genreName = genres.find(genre => genre.id === Number(getMoviesByGenre))?.name || "all"
 
    const uniqueIdsSet = new Set<number>()
-   const moviesList = movies.filter(movie => {
+   const moviesList = allMovies.filter(movie => {
       if (!uniqueIdsSet.has(movie.id)) {
          uniqueIdsSet.add(movie.id)
          return true
       }
       return false
    }).map(movie => {
-      const image = movie.poster_path ? `http://image.tmdb.org/t/p/w500${movie.poster_path}` : img
+      const image = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : img
 
       return <Link
          to={`movie/${movie.id}?${searchParams.toString()}`}
@@ -121,7 +130,9 @@ export const Home: React.FC = () => {
                <li key={genre.id}>
                   <Link
                      className={`movie__link ${getMoviesByGenre === String(genre.id) ? "active" : ""}`}
-                     to={`?genre=${genre.id}`}>
+                     to={`?genre=${genre.id}`}
+                     onClick={handleGenreChange}
+                  >
                      {genre.name}
                   </Link>
                </li>
@@ -132,7 +143,9 @@ export const Home: React.FC = () => {
             type='button'
             className={`movie__clear-filter ${getMoviesByGenre ? "movie__btn-visible" : ""}`}
             onClick={() => setSearchParams({})}
-         >Clear filter</button>
+         >
+            Clear filter
+         </button>
 
          <section className="home__movies">
             {moviesList}
@@ -150,11 +163,11 @@ export const Home: React.FC = () => {
             </div>
          )}
 
-         {!isLoading && page < totalPages && (
+         {!isLoading && currentPage < totalPages && (
             <button type='button'
                className="load-more-button"
-               onClick={() => setPage(previousState => previousState + 1)}
-            >Page {page} - Click for next
+               onClick={() => setCurrentPage(previousState => previousState + 1)}
+            >Page {currentPage} - Click for next
             </button>
          )}
       </main>

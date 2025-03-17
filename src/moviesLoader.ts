@@ -50,9 +50,6 @@ export async function homeLoader({ request }: LoaderFunctionArgs): Promise<HomeL
    const page = url.searchParams.get("page") || "1"
    const genre = url.searchParams.get("genre")
 
-   // No homeLoader, antes do fetch:
-console.log(`Fetching page ${page} for genre ${genre || 'all'}`)
-
    const [moviesResponse, genresResponse] = await Promise.all([
       fetch(
          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&page=${page}&with_genres=${genre || ""}`

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 export const Layout: React.FC = () => {
    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
       const savedTheme: string | null = localStorage.getItem("moviesDarkTheme")
-
       return savedTheme !== null ? JSON.parse(savedTheme) as boolean : false
    })
 

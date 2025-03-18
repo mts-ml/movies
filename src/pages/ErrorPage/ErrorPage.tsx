@@ -1,8 +1,8 @@
 import { useRouteError } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 import leftArrow from '../../assets/images/left-arrow.png'
 
-import "./errorPageStyle.scss";
+import "./errorPageStyle.scss"
 
 
 type RouteError = {
@@ -13,8 +13,7 @@ type RouteError = {
 
 
 export default function ErrorPage() {
-   const error = useRouteError() as RouteError;
-   console.log(error)
+   const error = useRouteError() as RouteError
 
    return (
       <section className="error-page">

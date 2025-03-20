@@ -45,7 +45,7 @@ export interface MovieDetailLoaderData {
 
 
 export async function homeLoader({ request }: LoaderFunctionArgs): Promise<HomeLoaderData> {
-   const API_KEY = import.meta.env.VITE_OMDB_API_KEY
+   const API_KEY = import.meta.env.VITE_THEMOVIEDB_API_KEY
    const url = new URL(request.url)
    const page = url.searchParams.get("page") || "1"
    const genre = url.searchParams.get("genre")
@@ -71,7 +71,7 @@ export async function homeLoader({ request }: LoaderFunctionArgs): Promise<HomeL
 
 
 export async function movieDetailLoader({ params }: LoaderFunctionArgs): Promise<MovieDetailLoaderData> {
-   const API_KEY = import.meta.env.VITE_OMDB_API_KEY
+   const API_KEY = import.meta.env.VITE_THEMOVIEDB_API_KEY
    const { id } = params
 
    const [movieResponse, castResponse, trailerResponse] = await Promise.all([

@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 
-export const Header: React.FC<HeaderProps> = (props) => {
+export const Header: React.FC<HeaderProps> = ({isDarkMode, handleTheme}) => {
    return (
       <header className="header">
          <div className="header__wrapper">
@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = (props) => {
                <h1 className="header__title">Movies</h1>
 
                <img
-               className={props.isDarkMode ? "header__title-img" : ""}
+               className={isDarkMode ? "header__title-img" : ""}
                src={camera}
                width={30}
                alt="Image of a camera"
@@ -29,9 +29,9 @@ export const Header: React.FC<HeaderProps> = (props) => {
 
             <button
                type='button' className="header__theme-btn"
-               onClick={props.handleTheme}
+               onClick={handleTheme}
             >
-               {props.isDarkMode ?
+               {isDarkMode ?
                   <>
                      Light mode
                      < img

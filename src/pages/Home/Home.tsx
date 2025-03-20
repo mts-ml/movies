@@ -122,6 +122,7 @@ export const Home: React.FC = () => {
       </Link>
    })
 
+
    return (
       <main className="main">
          <ul className="movie__genres">

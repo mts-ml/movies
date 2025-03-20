@@ -30,7 +30,6 @@ export const Home: React.FC = () => {
    const getMoviesByGenre = searchParams.get("genre")
 
    const handleGenreChange = () => {
-      setAllMovies([])
       setCurrentPage(1)
       setSearchParams(params => {
          params.delete("page")
@@ -93,6 +92,7 @@ export const Home: React.FC = () => {
    const genreName = genres.find(genre => genre.id === Number(getMoviesByGenre))?.name || "all"
 
    const uniqueIdsSet = new Set<number>()
+
    const moviesList = allMovies.filter(movie => {
       if (!uniqueIdsSet.has(movie.id)) {
          uniqueIdsSet.add(movie.id)
@@ -121,7 +121,6 @@ export const Home: React.FC = () => {
          </div>
       </Link>
    })
-
 
    return (
       <main className="main">

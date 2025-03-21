@@ -12,18 +12,22 @@ interface HeaderProps {
 }
 
 
-export const Header: React.FC<HeaderProps> = ({isDarkMode, handleTheme}) => {
+export const Header: React.FC<HeaderProps> = ({ isDarkMode, handleTheme }) => {
    return (
       <header className="header">
          <div className="header__wrapper">
-            <Link to="/" className="header__movies">
+            <Link
+               to="/"
+               className="header__movies"
+               onClick={() => window.scroll(0, 0)}
+            >
                <h1 className="header__title">Movies</h1>
 
                <img
-               className={isDarkMode ? "header__title-img" : ""}
-               src={camera}
-               width={30}
-               alt="Image of a camera"
+                  className={isDarkMode ? "header__title-img" : ""}
+                  src={camera}
+                  width={30}
+                  alt="Image of a camera"
                />
             </Link>
 

@@ -1,6 +1,6 @@
 import { formatDate, } from "../Home/Home";
-import { useParams, Link, useLocation, useLoaderData } from "react-router-dom"
-import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useLoaderData } from "react-router-dom"
+import { useEffect, useRef } from "react";
 import leftArrow from '../../assets/images/left-arrow.png'
 import castImg from '../../assets/images/person.svg'
 import { MovieDetailLoaderData } from "../../moviesLoader";
@@ -19,20 +19,24 @@ export const MovieDetail: React.FC = () => {
       trailer.site === "YouTube" && trailer.type === "Trailer"
    ))
 
-   function handleLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
+   function handleCastLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
       event.preventDefault()
       if (carousel.current && carousel.current.offsetWidth) {
          carousel.current.scrollLeft -= carousel.current.offsetWidth
       }
    }
 
-   function handleRightClick(event: React.MouseEvent<HTMLButtonElement>) {
+   function handleCastRightClick(event: React.MouseEvent<HTMLButtonElement>) {
       event.preventDefault()
       if (carousel.current && carousel.current.offsetWidth) {
          carousel.current.scrollLeft += carousel.current.offsetWidth
       }
    }
 
+   // Page returns to top when component render.
+   useEffect(() => {
+      window.scroll(0,0)
+   }, [])
 
    return (
       <main className="movie-detail__main">
@@ -87,7 +91,7 @@ export const MovieDetail: React.FC = () => {
             <button
                aria-label="Arrow back"
                type="button"
-               onClick={handleLeftClick}
+               onClick={handleCastLeftClick}
             >
                <svg
                   className="movie-detail__arrows"
@@ -101,7 +105,7 @@ export const MovieDetail: React.FC = () => {
             <button
                aria-label="Arrow forward"
                type="button"
-               onClick={handleRightClick}
+               onClick={handleCastRightClick}
             >
                <svg
                   className="movie-detail__arrows"

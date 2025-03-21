@@ -4,13 +4,14 @@ import { useEffect, useRef } from "react";
 import leftArrow from '../../assets/images/left-arrow.png'
 import castImg from '../../assets/images/person.svg'
 import { MovieDetailLoaderData } from "../../moviesLoader";
+import { handleCastLeftClick, handleCastRightClick } from "../../utils/utils";
 
 import "./movieDetailStyle.scss"
 
 
 export const MovieDetail: React.FC = () => {
    const { movie, cast, trailers } = useLoaderData() as MovieDetailLoaderData
-   const carousel = useRef<HTMLElement | null>(null)
+   const carouselRef = useRef<HTMLElement | null>(null)
    const pageLocation = useLocation()
    const movieGenreState = pageLocation.search
    const movieGenreType = pageLocation.state?.type || "all"
@@ -18,20 +19,6 @@ export const MovieDetail: React.FC = () => {
    const youTubeTrailers = trailers.filter(trailer => (
       trailer.site === "YouTube" && trailer.type === "Trailer"
    ))
-
-   function handleCastLeftClick(event: React.MouseEvent<HTMLButtonElement>) {
-      event.preventDefault()
-      if (carousel.current && carousel.current.offsetWidth) {
-         carousel.current.scrollLeft -= carousel.current.offsetWidth
-      }
-   }
-
-   function handleCastRightClick(event: React.MouseEvent<HTMLButtonElement>) {
-      event.preventDefault()
-      if (carousel.current && carousel.current.offsetWidth) {
-         carousel.current.scrollLeft += carousel.current.offsetWidth
-      }
-   }
 
    // Page returns to top when component render.
    useEffect(() => {
@@ -64,7 +51,7 @@ export const MovieDetail: React.FC = () => {
          </section>
 
          <h3 className="movie-detail__cast-name">Cast</h3>
-         <section className="movie-detail__cast" ref={carousel}>
+         <section className="movie-detail__cast" ref={carouselRef}>
             {cast.length === 0 ? (
                <p className="movie-detail__error">No cast avaiable</p>
             ) : (
@@ -91,7 +78,7 @@ export const MovieDetail: React.FC = () => {
             <button
                aria-label="Arrow back"
                type="button"
-               onClick={handleCastLeftClick}
+               onClick={(event) => handleCastLeftClick(event, carouselRef)}
             >
                <svg
                   className="movie-detail__arrows"
@@ -105,7 +92,7 @@ export const MovieDetail: React.FC = () => {
             <button
                aria-label="Arrow forward"
                type="button"
-               onClick={handleCastRightClick}
+               onClick={(event) => handleCastRightClick(event,carouselRef)}
             >
                <svg
                   className="movie-detail__arrows"

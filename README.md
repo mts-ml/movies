@@ -1,6 +1,5 @@
 ### PT-BR
 
-
 # 🎬 CineVerse Movies
 Projeto desenvolvido para explorar filmes de forma interativa e intuitiva. Descubra os filmes mais populares, navegue por diferentes gêneros e obtenha informações detalhadas sobre cada título.
 
@@ -15,13 +14,22 @@ Projeto desenvolvido para explorar filmes de forma interativa e intuitiva. Descu
 
 
 ## 🔗 Links
-
 - [🎥 Acesse o site: CineVerse Movies](https://cine-verse-movies.netlify.app/)
-- [📂 Repositório GitHub](https://github.com/mts-ml/movies)
 - [💼 LinkedIn](https://www.linkedin.com/in/mateus-lima-036790184/)
 
-🚀 Sinta-se à vontade para contribuir e sugerir melhorias! 😃🎥
 
+## 📦 Como Instalar e Rodar Localmente
+**Clone o repositório:** git clone https://github.com/mts-ml/movies<br>
+
+**Acesse a pasta do projeto:** cd cineverse-movies
+
+**Instale as dependências:** yarn ou npm install dependendo do gerenciador de pacotes
+
+**Inicie o servidor de desenvolvimento:** yarn dev ou npm run dev
+
+<br>
+🚀 Sinta-se à vontade para contribuir e sugerir melhorias! 😃🎥
+<br><br><br><br>
 
 
 
@@ -41,9 +49,18 @@ A project developed to explore movies interactively and intuitively. Discover th
 
 
 ## 🔗 Links
-
 - [🎥 Access the site: CineVerse Movies](https://cine-verse-movies.netlify.app/)
-- [📂 GitHub Repository](https://github.com/mts-ml/movies)
 - [💼 LinkedIn](https://www.linkedin.com/in/mateus-lima-036790184/)
 
-🚀 Feel free to contribute and suggest improvements! 😃🎥
+
+## 📦 How to Install and Run Locally
+**Clone the repository:** git clone https://github.com/mts-ml/movies<br>
+
+**Go to the project folder:** cd cineverse-movies
+
+**Install the dependencies:** yarn or npm install, depending on your package manager
+
+**Start the development server:** yarn dev or npm run dev
+
+<br>
+ 🚀 Feel free to contribute and suggest improvements! 😃🎥

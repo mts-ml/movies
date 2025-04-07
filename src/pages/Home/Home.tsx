@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import img from '../../assets/images/default-img.png'
 
 import './homeStyle.scss'
-import { handleCastLeftClick, handleCastRightClick } from '../../utils/utils';
+import { handleCastLeftClick, handleCastRightClick, throttle } from '../../utils/utils';
+import { log } from 'console';
 
 
 export function formatDate(dateString: string, locale = navigator.language) {
@@ -48,27 +49,29 @@ export const Home: React.FC = () => {
          if (isLoading || currentPage >= totalPages) return
 
          const scrollDistanceFromTop = document.documentElement.scrollTop
-         const totalPageHeight = document.documentElement.scrollHeight
          const visibleViewportHeight = document.documentElement.clientHeight
-
-         if (scrollDistanceFromTop + visibleViewportHeight >= totalPageHeight - 100) {
+         const totalPageHeight = document.documentElement.scrollHeight
+         
+         if (scrollDistanceFromTop + visibleViewportHeight >= totalPageHeight - 500) {
             setIsLoading(true)
-            setCurrentPage(previousPage => {
-               const nextPage = previousPage + 1
-
-               setSearchParams(previousParams => {
-                  previousParams.set("page", String(nextPage))
-                  return previousParams
-               })
-
-               return nextPage
-            })
+            setCurrentPage(previousPage => previousPage + 1)
          }
       }
 
-      window.addEventListener('scroll', handleScroll)
-      return () => window.removeEventListener('scroll', handleScroll)
+      const throttledScroll = throttle(handleScroll, 400)
+
+      window.addEventListener('scroll', throttledScroll)
+      return () => window.removeEventListener('scroll', throttledScroll)
    }, [isLoading, currentPage, totalPages, searchParams])
+
+   useEffect(() => {
+      if (currentPage > 1) {
+         setSearchParams(previousParams => {
+            previousParams.set("page", String(currentPage))
+            return previousParams
+         })
+      }
+   }, [currentPage, setSearchParams])
 
    useEffect(() => {
       currentPage === 1 ? setAllMovies(movies) : setAllMovies((previousState: Movies[]) => (

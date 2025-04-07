@@ -11,3 +11,18 @@ export function handleCastRightClick(event: React.MouseEvent<HTMLButtonElement>,
       ref.current.scrollLeft += ref.current.offsetWidth
    }
 }
+
+export function throttle(callback: () => void, delay: number) {
+   let shouldWait = false
+
+   return () => {
+      if (!shouldWait) {
+         callback()
+         shouldWait = true
+
+         setTimeout( () => {
+            shouldWait = false
+         }, delay)
+      }
+   }
+}
